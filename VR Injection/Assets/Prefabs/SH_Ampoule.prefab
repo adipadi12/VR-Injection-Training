@@ -149,6 +149,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d90fdf025e566e416b2974a2ae2f95d9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3771619229123808727}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d90fdf025e566e416b2974a2ae2f95d9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3322713283691091247}
   m_SourcePrefab: {fileID: 100100000, guid: d90fdf025e566e416b2974a2ae2f95d9, type: 3}
 --- !u!1 &545504181803803117 stripped
 GameObject:
@@ -332,6 +335,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0216, y: 0.021600006, z: 0.13900003}
   m_Center: {x: 0, y: 0, z: 0.0035000006}
+--- !u!114 &3322713283691091247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545504181803803117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9835199f8b533aac4b9f7a6372188272, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AmpouleInteraction
+  opening: {fileID: 1073893513869634500}
+  syringeTip: {fileID: 0}
+  insertionDistance: 0.04
 --- !u!4 &926005967107636055 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d90fdf025e566e416b2974a2ae2f95d9, type: 3}
