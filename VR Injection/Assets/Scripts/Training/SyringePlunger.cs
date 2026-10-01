@@ -4,9 +4,21 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class SyringePlunger : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private Transform syringe;
+    [SerializeField] private AmpouleInteraction ampoule;
+
+    [Header("Pull Settings")]
     [SerializeField] private float maxPullDistance = 0.12f;
 
+    public float PullAmount { get; private set; }
+
+    public bool IsFullyPulled =>
+        PullAmount >= 0.99f;
+
+    public bool IsFullyReleased =>
+        PullAmount <= 0f;
+        
     private XRBaseInteractable interactable;
 
     private Vector3 startLocalPosition;
@@ -14,14 +26,12 @@ public class SyringePlunger : MonoBehaviour
 
     private bool isGrabbed;
 
-    public float PullAmount { get; private set; }
-
     private void Awake()
     {
         interactable = GetComponent<XRBaseInteractable>();
 
         if (syringe == null)
-            Debug.LogError("Syringe reference is missing on SyringePlunger.");
+            Debug.LogError("Syringe reference is missing.");
 
         startLocalPosition = transform.localPosition;
     }
@@ -40,36 +50,47 @@ public class SyringePlunger : MonoBehaviour
 
     private void OnGrab(SelectEnterEventArgs args)
     {
+        Debug.Log("PLUNGER GRABBED");
+
         isGrabbed = true;
 
         startLocalPosition = transform.localPosition;
 
         Transform interactor = args.interactorObject.transform;
 
-        Vector3 localControllerPosition =
+        Vector3 localPosition =
             syringe.InverseTransformPoint(interactor.position);
 
-        controllerStartY = localControllerPosition.y;
+        controllerStartY = localPosition.y;
     }
 
     private void OnRelease(SelectExitEventArgs args)
     {
+        Debug.Log("PLUNGER RELEASED");
+
         isGrabbed = false;
     }
 
     private void Update()
     {
-        if (!isGrabbed || syringe == null)
+        if (!isGrabbed)
+            return;
+
+        // Only allow actual pulling when the needle is inside the ampoule.
+        if (ampoule != null && !ampoule.IsTipInside)
+            return;
+
+        if (interactable.firstInteractorSelecting == null)
             return;
 
         Transform interactor =
             interactable.firstInteractorSelecting.transform;
 
-        Vector3 localControllerPosition =
+        Vector3 localPosition =
             syringe.InverseTransformPoint(interactor.position);
 
         float displacement =
-            localControllerPosition.y - controllerStartY;
+            localPosition.y - controllerStartY;
 
         displacement = Mathf.Clamp(
             displacement,
@@ -80,6 +101,9 @@ public class SyringePlunger : MonoBehaviour
         transform.localPosition =
             startLocalPosition + Vector3.up * displacement;
 
-        PullAmount = displacement / maxPullDistance;
+        PullAmount =
+            displacement / maxPullDistance;
+
+        Debug.Log($"Pull Amount: {PullAmount:F2}");
     }
 }
