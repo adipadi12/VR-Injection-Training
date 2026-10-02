@@ -4,11 +4,10 @@
 
 ### Target Device
 
-OpenXR-compatible VR headset with two motion controllers. The project was developed and tested using the XR Interaction Simulator, allowing the core interactions to be tested without a physical headset.
+OpenXR compatible VR headset with two motion controllers. The project was developed and tested using the XR Interaction Simulator on a Linux machine for Windows, allowing the core interactions to be tested without a physical headset.
 
 ### Unity Version
 
-* Unity 6
 * Unity 6000.3.2f1
 * XR Interaction Toolkit 3.4.1
 * OpenXR Plugin
@@ -17,10 +16,12 @@ OpenXR-compatible VR headset with two motion controllers. The project was develo
 
 **Editor / Simulator**
 
+* **WASD** — walk around the XR environment
+* **Q/E** — translate up/down the XR environment
 * **Mouse** — Look / interact with the simulated XR environment
-* **E** — Pull medication from the ampoule
-* **I** — Inject medication
-* **R** — Restart the training session
+* **V** — Pull medication from the ampoule
+* **C** — Inject medication
+* **B** — Restart the training session
 * **Grip / configured interaction key** — Grab and release objects
 
 **VR**
@@ -38,6 +39,7 @@ The project uses Unity's XR ecosystem, primarily:
 * Unity Input System
 * TextMeshPro
 * Unity's built-in rendering and UI systems
+* Models from Sketchfab
 
 Additional environment and visual assets are included in the project where applicable. Custom scripts were written for the syringe, ampoule, medication, injection target, training progression, and reset functionality.
 
