@@ -10,5 +10,5 @@
 <img width="800" height="450" alt="2nd" src="https://github.com/user-attachments/assets/304d2611-f129-4db9-bab8-d41e2f20c83b" />
 
 
-3. Press C (Keyboard)/ PrimaryButton(Left or Right XR Controller) to draw medication
+3. Press C (Keyboard)/ PrimaryButton(Left or Right XR Controller) to inject patient
 <img width="800" height="450" alt="3rd" src="https://github.com/user-attachments/assets/e41d4bb3-3b9d-45ca-91ed-ba621a5168af" />
