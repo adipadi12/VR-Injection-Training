@@ -8,7 +8,7 @@ public class AmpouleInteraction : MonoBehaviour
     [SerializeField] private float insertionDistance = 0.08f;
 
     public bool IsTipInside { get; private set; }
-
+    int count = 0;
     private void Update()
     {
         if (opening == null || syringeTip == null)
@@ -30,6 +30,12 @@ public class AmpouleInteraction : MonoBehaviour
                     ? "SYRINGE TIP INSERTED"
                     : "SYRINGE TIP REMOVED"
             );
+        }
+
+        if(IsTipInside && count == 0)
+        {
+            count++;
+            TrainingManager.Instance.SetStep(TrainingManager.TrainingStep.DrawMedication);
         }
     }
 }

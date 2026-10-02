@@ -1,9 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class SyringePlunger : MonoBehaviour
 {
+    [Header("Input Pull")]
+    [SerializeField] private InputActionReference pullAction;
     [Header("References")]
     [SerializeField] private Transform syringe;
     [SerializeField] private AmpouleInteraction ampoule;
@@ -62,6 +65,8 @@ public class SyringePlunger : MonoBehaviour
             syringe.InverseTransformPoint(interactor.position);
 
         controllerStartY = localPosition.y;
+
+        // if(IsFullyPulled) TrainingManager.Instance.CompleteStep();
     }
 
     private void OnRelease(SelectExitEventArgs args)
@@ -70,7 +75,7 @@ public class SyringePlunger : MonoBehaviour
 
         isGrabbed = false;
     }
-
+    int count = 0;
     private void Update()
     {
         if (!isGrabbed)
@@ -83,6 +88,26 @@ public class SyringePlunger : MonoBehaviour
         if (interactable.firstInteractorSelecting == null)
             return;
 
+        // KEYBOARD / CONTROLLER PULL
+        // ------------------------------------------------
+
+        if (pullAction != null)
+        {
+            float input = pullAction.action.ReadValue<float>();
+
+            if (input > 0.01f)
+            {
+                PullAmount = Mathf.Clamp01(input);
+
+                transform.localPosition =
+                    startLocalPosition +
+                    Vector3.up * (PullAmount * maxPullDistance);
+
+                return;
+            }
+        }
+
+        // ------------------------------------------------
         Transform interactor =
             interactable.firstInteractorSelecting.transform;
 
@@ -104,6 +129,12 @@ public class SyringePlunger : MonoBehaviour
         PullAmount =
             displacement / maxPullDistance;
 
-        Debug.Log($"Pull Amount: {PullAmount:F2}");
+        if (IsFullyPulled && count == 0)
+        {
+            TrainingManager.Instance.SetStep(TrainingManager.TrainingStep.AimNeedleAtArea);
+            count++;
+        }
+
+        // Debug.Log($"Pull Amount: {PullAmount:F2}");
     }
 }

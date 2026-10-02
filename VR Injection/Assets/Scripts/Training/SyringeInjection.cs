@@ -3,9 +3,26 @@ using UnityEngine.InputSystem;
 
 public class SyringeInjection : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private SyringePlunger plunger;
+    [SerializeField] private TrainingManager trainingManager;
+
+    [Header("Input")]
+    [SerializeField] private InputActionReference injectAction;
 
     private InjectionTarget currentTarget;
+
+    private void OnEnable()
+    {
+        if (injectAction != null)
+            injectAction.action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (injectAction != null)
+            injectAction.action.Disable();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -18,6 +35,10 @@ public class SyringeInjection : MonoBehaviour
         currentTarget = target;
 
         Debug.Log("SYRINGE TIP OVER INJECTION TARGET");
+
+        TrainingManager.Instance.SetStep(
+            TrainingManager.TrainingStep.Inject
+        );
     }
 
     private void OnTriggerExit(Collider other)
@@ -41,13 +62,27 @@ public class SyringeInjection : MonoBehaviour
             return;
         }
 
+        Debug.Log("INJECTION SUCCESSFUL");
+
         currentTarget.Inject();
+
+        if (trainingManager != null)
+        {
+            trainingManager.CompleteStep();
+        }
+
+        TrainingManager.Instance.SetStep(
+            TrainingManager.TrainingStep.Complete
+        );
     }
 
     private void Update()
     {
-        if (currentTarget != null &&
-            Keyboard.current.iKey.wasPressedThisFrame)
+        if (currentTarget == null)
+            return;
+
+        if (injectAction != null &&
+            injectAction.action.WasPressedThisFrame())
         {
             Inject();
         }
