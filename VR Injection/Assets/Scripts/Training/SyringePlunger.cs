@@ -1,140 +1,82 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class SyringePlunger : MonoBehaviour
 {
-    [Header("Input Pull")]
-    [SerializeField] private InputActionReference pullAction;
     [Header("References")]
     [SerializeField] private Transform syringe;
     [SerializeField] private AmpouleInteraction ampoule;
 
+    [Header("Syringe Interaction")]
+    [SerializeField] private XRGrabInteractable syringeInteractable;
+
     [Header("Pull Settings")]
     [SerializeField] private float maxPullDistance = 0.12f;
 
+    [Header("Input")]
+    [SerializeField] private InputActionReference pullAction;
+
     public float PullAmount { get; private set; }
 
-    public bool IsFullyPulled =>
-        PullAmount >= 0.99f;
-
-    public bool IsFullyReleased =>
-        PullAmount <= 0f;
-        
-    private XRBaseInteractable interactable;
-
     private Vector3 startLocalPosition;
-    private float controllerStartY;
-
-    private bool isGrabbed;
 
     private void Awake()
     {
-        interactable = GetComponent<XRBaseInteractable>();
+        startLocalPosition = transform.localPosition;
 
         if (syringe == null)
             Debug.LogError("Syringe reference is missing.");
 
-        startLocalPosition = transform.localPosition;
+        if (syringeInteractable == null)
+            Debug.LogError("Syringe XRGrabInteractable reference is missing.");
     }
 
     private void OnEnable()
     {
-        interactable.selectEntered.AddListener(OnGrab);
-        interactable.selectExited.AddListener(OnRelease);
+        if (pullAction != null)
+            pullAction.action.Enable();
     }
 
     private void OnDisable()
     {
-        interactable.selectEntered.RemoveListener(OnGrab);
-        interactable.selectExited.RemoveListener(OnRelease);
+        if (pullAction != null)
+            pullAction.action.Disable();
     }
 
-    private void OnGrab(SelectEnterEventArgs args)
-    {
-        Debug.Log("PLUNGER GRABBED");
-
-        isGrabbed = true;
-
-        startLocalPosition = transform.localPosition;
-
-        Transform interactor = args.interactorObject.transform;
-
-        Vector3 localPosition =
-            syringe.InverseTransformPoint(interactor.position);
-
-        controllerStartY = localPosition.y;
-
-        // if(IsFullyPulled) TrainingManager.Instance.CompleteStep();
-    }
-
-    private void OnRelease(SelectExitEventArgs args)
-    {
-        Debug.Log("PLUNGER RELEASED");
-
-        isGrabbed = false;
-    }
     int count = 0;
     private void Update()
     {
-        if (!isGrabbed)
+        if (syringeInteractable == null)
             return;
 
-        // Only allow actual pulling when the needle is inside the ampoule.
+        // User must be holding the SYRINGE.
+        if (!syringeInteractable.isSelected)
+            return;
+
+        // Syringe tip must be inside ampoule.
         if (ampoule != null && !ampoule.IsTipInside)
             return;
 
-        if (interactable.firstInteractorSelecting == null)
+        if (pullAction == null)
             return;
 
-        // KEYBOARD / CONTROLLER PULL
-        // ------------------------------------------------
+        float input = pullAction.action.ReadValue<float>();
 
-        if (pullAction != null)
-        {
-            float input = pullAction.action.ReadValue<float>();
+        // Only pull while input is active.
+        if (input <= 0.01f)
+            return;
 
-            if (input > 0.01f)
-            {
-                PullAmount = Mathf.Clamp01(input);
-
-                transform.localPosition =
-                    startLocalPosition +
-                    Vector3.up * (PullAmount * maxPullDistance);
-
-                return;
-            }
-        }
-
-        // ------------------------------------------------
-        Transform interactor =
-            interactable.firstInteractorSelecting.transform;
-
-        Vector3 localPosition =
-            syringe.InverseTransformPoint(interactor.position);
-
-        float displacement =
-            localPosition.y - controllerStartY;
-
-        displacement = Mathf.Clamp(
-            displacement,
-            0f,
-            maxPullDistance
-        );
+        PullAmount = Mathf.Clamp01(input);
 
         transform.localPosition =
-            startLocalPosition + Vector3.up * displacement;
+            startLocalPosition +
+            Vector3.up * (PullAmount * maxPullDistance);
 
-        PullAmount =
-            displacement / maxPullDistance;
-
-        if (IsFullyPulled && count == 0)
+        if (PullAmount == 1 && count == 0)
         {
             TrainingManager.Instance.SetStep(TrainingManager.TrainingStep.AimNeedleAtArea);
             count++;
         }
-
-        // Debug.Log($"Pull Amount: {PullAmount:F2}");
     }
 }
