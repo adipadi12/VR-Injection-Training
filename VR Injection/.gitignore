@@ -12,14 +12,6 @@
 # Memory captures
 [Mm]emoryCaptures/
 
-# Asset Store tools
-[Aa]ssets/[Aa]sset[Ss]tore[Tt]ools*
-[Aa]ssets/[Ss]amples*
-[Aa]ssets/[Ss]cenes*
-[Aa]ssets/[Ss]ettings*
-[Aa]ssets/[Vv][Rr][Tt]emplate[Aa]ssets*
-[Aa]ssets/[Xx][Rr]*
-[Aa]ssets/[Xx][Rr][Ii]*
 # ==========================================
 # IDE / Editor
 # ==========================================
@@ -67,7 +59,6 @@ sysinfo.txt
 *.apk
 *.aab
 *.app
-*.unitypackage
 
 # ==========================================
 # Logs
