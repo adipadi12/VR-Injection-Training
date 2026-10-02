@@ -45,7 +45,7 @@ public class TrainingUI : MonoBehaviour
 
             case TrainingManager.TrainingStep.Inject:
                 instructionText.text = "Inject";
-                subInstructionText.text = "Press C (Keyboard)/ PrimaryButton(Left or Right XR Controller) to draw medication";
+                subInstructionText.text = "Press C (Keyboard)/ PrimaryButton(Left or Right XR Controller) to inject patient";
                 break;
 
             case TrainingManager.TrainingStep.Complete:
